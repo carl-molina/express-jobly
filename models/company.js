@@ -59,33 +59,95 @@ class Company {
     //not hardcoding the where clause, we must build it based on the filter terms
     // TODO: implement filtering of nameLike, minEmployees, maxEmployees
 
+    let companiesRes;
+
+
+    // companies -> name and num eployees
 
 
     if (nameLike in obj && !(minEmployees in obj) && !(maxEmployees in obj)) {
-
+      companiesRes = await db.query(
+        `SELECT handle,
+                name,
+                description,
+                num_employees AS "numEployees",
+                logo_url AS "logoUrl"
+         FROM companies
+         WHERE name ILIKE $1`,
+         [`%${obj[nameLike]}%`]
+      );
     } else if (nameLike in obj && minEmployees in obj && !(maxEmployees in obj)) {
-
+      companiesRes = await db.query(
+        `SELECT handle,
+                name,
+                description,
+                num_employees AS "numEployees",
+                logo_url AS "logoUrl"
+         FROM companies
+         WHERE name ILIKE $1 AND num_employees >= $2`,
+         [`%${obj[nameLike]}%`, obj[minEmployees]]
+      );
     } else if (nameLike in obj && !(minEmployees in ob) && maxEmployees in obj) {
+      companiesRes = await db.query(
+        `SELECT handle,
+                name,
+                description,
+                num_employees AS "numEployees",
+                logo_url AS "logoUrl"
+         FROM companies
+         WHERE name ILIKE $1 AND num_employees <= $2`,
+         [`%${obj[nameLike]}%`, obj[maxEmployees]]
+      );
 
     } else if (!(namelike in obj) && minEmployees in obj && !(maxEmployees in obj)) {
+      companiesRes = await db.query(
+        `SELECT handle,
+                name,
+                description,
+                num_employees AS "numEployees",
+                logo_url AS "logoUrl"
+         FROM companies
+         WHERE num_employees >= $1`,
+         [obj[minEmployees]]
+      );
 
     } else if (!(namelike in obj) && !(minEmployees) in obj && maxEmployees in obj) {
+      companiesRes = await db.query(
+        `SELECT handle,
+                name,
+                description,
+                num_employees AS "numEployees",
+                logo_url AS "logoUrl"
+         FROM companies
+         WHERE num_employees <= $1`,
+         [obj[maxEmployees]]
+      );
 
     } else if (!(namelike in obj) && minEmployees in obj && maxEmployees in obj) {
-
+      companiesRes = await db.query(
+        `SELECT handle,
+                name,
+                description,
+                num_employees AS "numEployees",
+                logo_url AS "logoUrl"
+         FROM companies
+         WHERE num_employees >= $1 AND num_employees <= $2`,
+         [obj[minEmployees], obj[maxEmployees]]
+      );
     } else {
       console.log('We got to the end of the giant if/else block!');
+      // If there aren't any filters, this query gets list of all companies.
+      companiesRes = await db.query(`
+      SELECT handle,
+             name,
+             description,
+             num_employees AS "numEmployees",
+             logo_url      AS "logoUrl"
+      FROM companies
+      ORDER BY name`);
     }
 
 
-    const companiesRes = await db.query(`
-        SELECT handle,
-               name,
-               description,
-               num_employees AS "numEmployees",
-               logo_url      AS "logoUrl"
-        FROM companies
-        ORDER BY name`);
     return companiesRes.rows;
   }
 
