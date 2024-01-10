@@ -8,19 +8,16 @@ const { BadRequestError } = require("../expressError");
 /**
  *  sqlForPartialUpdate:
  *
- *  TODO: Takes in a an object(dataToUpdate) and stores its keys in keys.
- *  dataToUpdate -> { firstName: 'Aliya', age: 32 }
+ *  Takes in a an object(dataToUpdate) like:
+ *    { firstName: 'Aliya', age: 32 }
  *
- *  keys = ['firstName', 'age']
+ *  Takes in an object (jsToSql) like:
+ *    { firstName: first_name, age: age }
  *
- *  Takes in an object (jsToSql)
- *  Coerces jsCamelCase to SQL snake_case
+ *  Calling this function helps format the SET clause of a SQL UPDATE.
  *
- *  FINDS colName in jsToSql array/object and returns the snake_case version
- *
- *  TODO: jsToSql takes in an object { firstName: first_name, age: age }
- *
- *
+ *  FINDS colName in jsToSql object and returns the snake_case version
+
  *  returns an object:
  *    {
  *      setCols: '"first_name"=$1', '"age"=$2'
