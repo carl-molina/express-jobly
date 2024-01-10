@@ -56,7 +56,9 @@ router.get("/", async function (req, res, next) {
   const q = req.query;
 
   if (q.minEmployees !== undefined && (!isNaN(Number(q.minEmployees)))) {
-    q.minEmployees = Number(q.minEmplyees);
+    q.minEmployees = Number(q.minEmployees);
+    console.log('This is q.minEmployyes', q.minEmployees);
+    console.log('This is typeof q.minEmployyes', typeof q.minEmployees);
   }
   if (q.maxEmployees !== undefined && (!isNaN(Number(q.maxEmployees)))) {
     q.maxEmployees = Number(q.maxEmployees);

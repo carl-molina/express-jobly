@@ -61,78 +61,102 @@ class Company {
 
     let companiesRes;
 
+    const { nameLike, minEmployees, maxEmployees } = obj;
+
 
     // companies -> name and num eployees
 
+    console.log('This is obj', obj);
+    console.log('nameLike:', nameLike);
+    console.log('minEmployees', minEmployees);
+    console.log('maxEmployess', maxEmployees);
 
-    if (nameLike in obj && !(minEmployees in obj) && !(maxEmployees in obj)) {
+
+
+    if (nameLike && minEmployees && maxEmployees) {
+      console.log('We got to the right query!');
       companiesRes = await db.query(
         `SELECT handle,
                 name,
                 description,
-                num_employees AS "numEployees",
+                num_employees AS "numEmployees",
+                logo_url AS "logoUrl"
+         FROM companies
+         WHERE name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3`,
+         [`%${nameLike}%`, minEmployees, maxEmployees]
+      );
+      // GOOD
+    }
+    else if (nameLike && (!minEmployees) && !(maxEmployees)) {
+      companiesRes = await db.query(
+        `SELECT handle,
+                name,
+                description,
+                num_employees AS "numEmployees",
                 logo_url AS "logoUrl"
          FROM companies
          WHERE name ILIKE $1`,
-         [`%${obj[nameLike]}%`]
+         [`%${nameLike}%`]
       );
-    } else if (nameLike in obj && minEmployees in obj && !(maxEmployees in obj)) {
+      // GOOD
+    } else if (nameLike && minEmployees && !(maxEmployees)) {
       companiesRes = await db.query(
         `SELECT handle,
                 name,
                 description,
-                num_employees AS "numEployees",
+                num_employees AS "numEmployees",
                 logo_url AS "logoUrl"
          FROM companies
          WHERE name ILIKE $1 AND num_employees >= $2`,
-         [`%${obj[nameLike]}%`, obj[minEmployees]]
+         [`%${nameLike}%`, minEmployees]
       );
-    } else if (nameLike in obj && !(minEmployees in ob) && maxEmployees in obj) {
+      // TODO: we're currently here
+    } else if (nameLike && !(minEmployees) && maxEmployees) {
       companiesRes = await db.query(
         `SELECT handle,
                 name,
                 description,
-                num_employees AS "numEployees",
+                num_employees AS "numEmployees",
                 logo_url AS "logoUrl"
          FROM companies
          WHERE name ILIKE $1 AND num_employees <= $2`,
-         [`%${obj[nameLike]}%`, obj[maxEmployees]]
+         [`%${nameLike}%`, maxEmployees]
       );
 
-    } else if (!(namelike in obj) && minEmployees in obj && !(maxEmployees in obj)) {
+    } else if (!(nameLike) && minEmployees && !(maxEmployees)) {
       companiesRes = await db.query(
         `SELECT handle,
                 name,
                 description,
-                num_employees AS "numEployees",
+                num_employees AS "numEmployees",
                 logo_url AS "logoUrl"
          FROM companies
          WHERE num_employees >= $1`,
-         [obj[minEmployees]]
+         [minEmployees]
       );
 
-    } else if (!(namelike in obj) && !(minEmployees) in obj && maxEmployees in obj) {
+    } else if (!(nameLike) && !(minEmployees) && maxEmployees) {
       companiesRes = await db.query(
         `SELECT handle,
                 name,
                 description,
-                num_employees AS "numEployees",
+                num_employees AS "numEmployees",
                 logo_url AS "logoUrl"
          FROM companies
          WHERE num_employees <= $1`,
-         [obj[maxEmployees]]
+         [maxEmployees]
       );
 
-    } else if (!(namelike in obj) && minEmployees in obj && maxEmployees in obj) {
+    } else if (!(nameLike) && minEmployees && maxEmployees) {
       companiesRes = await db.query(
         `SELECT handle,
                 name,
                 description,
-                num_employees AS "numEployees",
+                num_employees AS "numEmployees",
                 logo_url AS "logoUrl"
          FROM companies
          WHERE num_employees >= $1 AND num_employees <= $2`,
-         [obj[minEmployees], obj[maxEmployees]]
+         [minEmployees], [maxEmployees]
       );
     } else {
       console.log('We got to the end of the giant if/else block!');
