@@ -56,6 +56,8 @@ class Company {
    * */
 
   static async findAll() {
+    //not hardcoding the where clause, we must build it based on the filter terms
+    //
     const companiesRes = await db.query(`
         SELECT handle,
                name,
