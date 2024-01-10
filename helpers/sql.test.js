@@ -1,7 +1,12 @@
 "use strict"
+let { BadRequestError } = require("../expressError");
+BadRequestError = jest.fn();
+
+// const fetchMock = require("fetch-mock");
+
 const { sqlForPartialUpdate } = require("./sql");
 
-
+console.error = jest.fn();
 
 describe('sqlForPartialUpdate function', function() {
 
@@ -18,13 +23,35 @@ describe('sqlForPartialUpdate function', function() {
 
   it("tests for invalid input", function () {
 
-    const result = sqlForPartialUpdate(
-      {firstName: 'Aliyah', age: 32},
-      {firstName: "first_name", age: "age"}
-    );
+    let result;
+    try {
+      result = sqlForPartialUpdate({}, {firstName: "first_name", age: "age"});
+      // throw new Error();
+      throw new Error("fail test, you shouldn't get here");
+    } catch (err) {
+      console.log('This is err:', err);
+      expect(err.status).toEqual(400);
+      // expect(err instanceof BadRequestError).toBeTruthy();
+    }
 
-    expect(result).toEqual({setCols: "\"first_name\"=$1, \"age\"=$2",
-    values: ['Aliyah', 32]})
+    expect(result).toEqual(undefined);
+
+      // console.error.mockResolvedValue('This is err: BadRequestError: No Data');
+      // console.log('This is err:', err);
+      // expect(err).toEqual(`[Error: No Data]`);
+
+    // BadRequestError.mockResolvedValue("No data");
+
+    // sqlForPartialUpdate({}, {firstName: "first_name", age: "age"});
+
+
+    // expect(sqlForPartialUpdate).toThrow(BadRequestError);
+    // expect(result).toEqual("No data");
+
+    // NOT A GOOD TEST:
+    // expect(console.error).toHaveBeenCalled();
+    // expect(console.error).toHaveBeenCalledWith("This is err: BadRequestError: No Data");
+
   });
 
 });

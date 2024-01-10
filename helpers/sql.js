@@ -30,7 +30,12 @@ const { BadRequestError } = require("../expressError");
 
 function sqlForPartialUpdate(dataToUpdate, jsToSql) {
   const keys = Object.keys(dataToUpdate);
-  if (keys.length === 0) throw new BadRequestError("No data");
+  console.log('This is keys', keys);
+  console.log('This is Object.keys(dataToUpdate)', Object.keys(dataToUpdate));
+  if (keys.length === 0) {
+    console.error('This is err: BadRequestError: No Data');
+    throw new BadRequestError("No Data");
+  }
 
   // {firstName: 'Aliya', age: 32} => ['"first_name"=$1', '"age"=$2']
   const cols = keys.map((colName, idx) =>
