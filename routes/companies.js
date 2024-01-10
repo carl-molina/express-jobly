@@ -55,6 +55,10 @@ router.get("/", async function (req, res, next) {
 
   const q = req.query;
 
+  if (q.minEmployees > q.maxEmployees) {
+    throw new BadRequestError('Min cannot be more than max');
+  }
+
   if (q.minEmployees !== undefined && (!isNaN(Number(q.minEmployees)))) {
     q.minEmployees = Number(q.minEmployees);
     console.log('This is q.minEmployyes', q.minEmployees);
