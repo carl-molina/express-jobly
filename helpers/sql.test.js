@@ -33,7 +33,7 @@ describe('sqlForPartialUpdate function', function () {
     } catch (err) {
       console.log('This is err:', err);
       expect(err.status).toEqual(400);
-      // expect(err instanceof BadRequestError).toBeTruthy();
+      expect(err.message).toEqual("No Data");
     }
     expect(result).toEqual(undefined);
   });
@@ -47,6 +47,11 @@ describe('sqlForPartialUpdate function', function () {
         values: ['Aliyah', 32]
       });
   });
+
+  // it("tests for empty jsToSql input part 2", function () {
+  //   expect(sqlForPartialUpdate({}, {firstName: "first_name", age: "age"})).toThrow(Error);
+  //   expect(sqlForPartialUpdate({}, {firstName: "first_name", age: "age"})).toThrow(BadRequestError);
+  // });
 
 
 });
