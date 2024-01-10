@@ -53,9 +53,18 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
 
-  const validator = jsonschema.validate(req.query, companySearch, {required: true});
+  const queryResults = req.query;
+
+  if(queryResults.minEmployees !== undefined){
+    queryResults.minEmplyees = Number(queryResults.minEmplyees);
+  }
+  if(queryResults.maxEmployees !== undefined){
+    queryResults.maxEmplyees = Number(queryResults.maxEmplyees);
+  }
+
+  const validator = jsonschema.validate(queryResults, companySearchSchema, {required: true});
   if (!validator.valid) {
-    const errs = result.errors.map(err => err.stack);
+    const errs = validator.errors.map(err => err.stack);
     throw new BadRequestError(errs);
   }
 
