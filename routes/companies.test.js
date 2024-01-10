@@ -128,7 +128,7 @@ describe("GET /companies", function () {
       .query({ invalid: "C" });
 
     expect(resp.body.error.message)
-      .toEqual("instance is not allowed to have the additional property \"invalid\"")
+      .toEqual(["instance is not allowed to have the additional property \"invalid\""])
     expect(resp.statusCode).toEqual(400);
   });
 
@@ -138,7 +138,7 @@ describe("GET /companies", function () {
       .query({ nameLike: "C", minEmployees: "3" });
 
     expect(resp.body.error.message)
-      .toEqual("instance.minEmployees is not of a type(s) integer")
+      .toEqual(["instance.minEmployees is not of a type(s) integer"])
     expect(resp.statusCode).toEqual(400);
   });
 

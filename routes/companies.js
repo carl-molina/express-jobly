@@ -53,23 +53,23 @@ router.post("/", ensureLoggedIn, async function (req, res, next) {
 
 router.get("/", async function (req, res, next) {
 
-  const queryResults = req.query;
+  const q = req.query;
 
-  if(queryResults.minEmployees !== undefined){
-    queryResults.minEmplyees = Number(queryResults.minEmplyees);
+  if (q.minEmployees !== undefined && (!isNaN(Number(q.minEmployees)))) {
+    q.minEmployees = Number(q.minEmplyees);
   }
-  if(queryResults.maxEmployees !== undefined){
-    queryResults.maxEmplyees = Number(queryResults.maxEmplyees);
+  if (q.maxEmployees !== undefined && (!isNaN(Number(q.maxEmployees)))) {
+    q.maxEmployees = Number(q.maxEmployees);
   }
 
-  const validator = jsonschema.validate(queryResults, companySearchSchema, {required: true});
+  const validator = jsonschema.validate(q, companySearchSchema, {required: true});
   if (!validator.valid) {
     const errs = validator.errors.map(err => err.stack);
     throw new BadRequestError(errs);
   }
 
   // TODO: we're here
-  const companies = await Company.findAll(req.query);
+  const companies = await Company.findAll(q);
 
   return res.json({ companies });
 });

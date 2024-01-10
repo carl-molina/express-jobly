@@ -55,9 +55,27 @@ class Company {
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll() {
+  static async findAll(obj) {
     //not hardcoding the where clause, we must build it based on the filter terms
     // TODO: implement filtering of nameLike, minEmployees, maxEmployees
+
+
+
+    if (nameLike in obj && !(minEmployees in obj) && !(maxEmployees in obj)) {
+
+    } else if (nameLike in obj && minEmployees in obj && !(maxEmployees in obj)) {
+
+    } else if (nameLike in obj && !(minEmployees in ob) && maxEmployees in obj) {
+
+    } else if (!(namelike in obj) && minEmployees in obj && !(maxEmployees in obj)) {
+
+    } else if (!(namelike in obj) && !(minEmployees) in obj && maxEmployees in obj) {
+
+    } else if (!(namelike in obj) && minEmployees in obj && maxEmployees in obj) {
+
+    } else {
+      console.log('We got to the end of the giant if/else block!');
+    }
 
 
     const companiesRes = await db.query(`
