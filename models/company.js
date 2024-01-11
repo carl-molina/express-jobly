@@ -70,9 +70,13 @@ class Company {
     const where = [];
 
     if (nameLike) where.push(`name ILIKE '%${nameLike}%'`);
+    if (nameLike) where.push(`name ILIKE '$1'`);
+
     if (minEmployees) where.push(`num_employees >= ${minEmployees}`);
     if (minEmployees) where.push(`num_employees >= $2`);
+
     if (maxEmployees) where.push(`num_employees <= ${maxEmployees}`);
+    if (maxEmployees) where.push(`num_employees <= $3`);
 
     if (where.length !== 0){
       q += " WHERE " + where.join(" AND ");
