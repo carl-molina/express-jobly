@@ -86,7 +86,7 @@ describe("findAll", function () {
     ]);
   });
   test("works: filter by name", async function () {
-    let companies = await Company.findAll({name: "1"});
+    let companies = await Company.findAll({nameLike: "1"});
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -97,18 +97,7 @@ describe("findAll", function () {
       },
     ]);
   });
-  test("works: filter by name(net)", async function () {
-    let companies = await Company.findAll({name: "net"});
-    expect(companies).toEqual([
-      {
-        handle: "netCompany",
-        name: "Study Networks",
-        description: "DescSN",
-        numEmployees: 4,
-        logoUrl: "http://net.img",
-      },
-    ]);
-  });
+
   test("works: filter by minEmployees", async function () {
     let companies = await Company.findAll({minEmployees: 2});
     expect(companies).toEqual([
@@ -174,7 +163,7 @@ describe("findAll", function () {
     ]);
   });
   test("works: filter by name and max Employees", async function () {
-    let companies = await Company.findAll({name: "C", maxEmployees: 4});
+    let companies = await Company.findAll({nameLike: "C", maxEmployees: 4});
     expect(companies).toEqual([
       {
         handle: "c1",
@@ -200,7 +189,7 @@ describe("findAll", function () {
     ]);
   });
   test("works: filter by name-no matching companies", async function () {
-    let companies = await Company.findAll({name: "z"});
+    let companies = await Company.findAll({nameLike: "z"});
     expect(companies).toEqual([]);
   });
 

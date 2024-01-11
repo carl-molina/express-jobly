@@ -135,12 +135,19 @@ describe("GET /companies", function () {
   test("valid query key-incorrect value type", async function () {
     const resp = await request(app)
       .get("/companies")
-      .query({ nameLike: "C", minEmployees: "3" });
+      .query({ nameLike: "c", minEmployees: "abc" });
 
     expect(resp.body.error.message)
       .toEqual(["instance.minEmployees is not of a type(s) integer"])
     expect(resp.statusCode).toEqual(400);
   });
+
+  test("minEmployees is more than maxEmployees", async function() {
+    const resp = await request(app)
+      .get("/companies")
+      .query({ minEmployees: 2, maxEmployees: 1 });
+    expect(resp.statusCode).toEqual(400);
+  })
 
 });
 

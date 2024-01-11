@@ -55,122 +55,143 @@ class Company {
    * Returns [{ handle, name, description, numEmployees, logoUrl }, ...]
    * */
 
-  static async findAll(obj) {
+  static async findAll(query = {}) {
     //not hardcoding the where clause, we must build it based on the filter terms
     // TODO: implement filtering of nameLike, minEmployees, maxEmployees
 
-    let companiesRes;
+    // let companiesRes;
 
-    const { nameLike, minEmployees, maxEmployees } = obj;
+    const { nameLike, minEmployees, maxEmployees } = query;
 
 
     // companies -> name and num eployees
 
-    console.log('This is obj', obj);
-    console.log('nameLike:', nameLike);
-    console.log('minEmployees', minEmployees);
-    console.log('maxEmployess', maxEmployees);
+    // console.log('This is obj', obj);
+    // // console.log('nameLike:', nameLike);
+    // console.log('minEmployees', minEmployees);
+    // console.log('maxEmployess', maxEmployees);
 
 
 
-    if (nameLike && minEmployees && maxEmployees) {
-      console.log('We got to the right query!');
-      companiesRes = await db.query(
-        `SELECT handle,
-                name,
-                description,
-                num_employees AS "numEmployees",
-                logo_url AS "logoUrl"
-         FROM companies
-         WHERE name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3`,
-         [`%${nameLike}%`, minEmployees, maxEmployees]
-      );
-      // GOOD
+    // if (nameLike && minEmployees && maxEmployees) {
+    //   console.log('We got to the right query!');
+    //   companiesRes = await db.query(
+    //     `SELECT handle,
+    //             name,
+    //             description,
+    //             num_employees AS "numEmployees",
+    //             logo_url AS "logoUrl"
+    //      FROM companies
+    //      WHERE name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3`,
+    //      [`%${nameLike}%`, minEmployees, maxEmployees]
+    //   );
+    //   // GOOD
+    // }
+    // else if (nameLike && (!minEmployees) && !(maxEmployees)) {
+    //   companiesRes = await db.query(
+    //     `SELECT handle,
+    //             name,
+    //             description,
+    //             num_employees AS "numEmployees",
+    //             logo_url AS "logoUrl"
+    //      FROM companies
+    //      WHERE name ILIKE $1`,
+    //      [`%${nameLike}%`]
+    //   );
+    //   // GOOD
+    // } else if (nameLike && minEmployees && !(maxEmployees)) {
+    //   companiesRes = await db.query(
+    //     `SELECT handle,
+    //             name,
+    //             description,
+    //             num_employees AS "numEmployees",
+    //             logo_url AS "logoUrl"
+    //      FROM companies
+    //      WHERE name ILIKE $1 AND num_employees >= $2`,
+    //      [`%${nameLike}%`, minEmployees]
+    //   );
+    //   // GOOD
+    // } else if (nameLike && !(minEmployees) && maxEmployees) {
+    //   companiesRes = await db.query(
+    //     `SELECT handle,
+    //             name,
+    //             description,
+    //             num_employees AS "numEmployees",
+    //             logo_url AS "logoUrl"
+    //      FROM companies
+    //      WHERE name ILIKE $1 AND num_employees <= $2`,
+    //      [`%${nameLike}%`, maxEmployees]
+    //   );
+    //     //GOOD
+    // } else if (!(nameLike) && minEmployees && !(maxEmployees)) {
+    //   companiesRes = await db.query(
+    //     `SELECT handle,
+    //             name,
+    //             description,
+    //             num_employees AS "numEmployees",
+    //             logo_url AS "logoUrl"
+    //      FROM companies
+    //      WHERE num_employees >= $1`,
+    //      [minEmployees]
+    //   );
+
+    // } else if (!(nameLike) && !(minEmployees) && maxEmployees) {
+    //   companiesRes = await db.query(
+    //     `SELECT handle,
+    //             name,
+    //             description,
+    //             num_employees AS "numEmployees",
+    //             logo_url AS "logoUrl"
+    //      FROM companies
+    //      WHERE num_employees <= $1`,
+    //      [maxEmployees]
+    //   );
+    //     //GOOD
+    // } else if (!(nameLike) && minEmployees && maxEmployees) {
+    //   companiesRes = await db.query(
+    //     `SELECT handle,
+    //             name,
+    //             description,
+    //             num_employees AS "numEmployees",
+    //             logo_url AS "logoUrl"
+    //      FROM companies
+    //      WHERE num_employees >= $1 AND num_employees <= $2`,
+    //      [minEmployees, maxEmployees]
+    //   );
+    // } else {
+    //   console.log('We got to the end of the giant if/else block!');
+    //   // If there aren't any filters, this query gets list of all companies.
+    //   companiesRes = await db.query(`
+    //   SELECT handle,
+    //          name,
+    //          description,
+    //          num_employees AS "numEmployees",
+    //          logo_url      AS "logoUrl"
+    //   FROM companies
+    //   ORDER BY name`);
+    // }
+
+    let q = `
+    SELECT handle,
+            name,
+           description,
+          num_employees AS "numEmployees",
+          logo_url AS "logoUrl"
+    FROM companies`;
+
+    const where = [];
+
+    if(nameLike) where.push(`name ILIKE '%${nameLike}%'`);
+    if(minEmployees) where.push(`num_employees >= ${minEmployees}`);
+    if(maxEmployees) where.push(`num_employees <= ${maxEmployees}`);
+
+    if(where.length !== 0){
+      q += " WHERE " + where.join(" AND ");
     }
-    else if (nameLike && (!minEmployees) && !(maxEmployees)) {
-      companiesRes = await db.query(
-        `SELECT handle,
-                name,
-                description,
-                num_employees AS "numEmployees",
-                logo_url AS "logoUrl"
-         FROM companies
-         WHERE name ILIKE $1`,
-         [`%${nameLike}%`]
-      );
-      // GOOD
-    } else if (nameLike && minEmployees && !(maxEmployees)) {
-      companiesRes = await db.query(
-        `SELECT handle,
-                name,
-                description,
-                num_employees AS "numEmployees",
-                logo_url AS "logoUrl"
-         FROM companies
-         WHERE name ILIKE $1 AND num_employees >= $2`,
-         [`%${nameLike}%`, minEmployees]
-      );
-      // TODO: we're currently here
-    } else if (nameLike && !(minEmployees) && maxEmployees) {
-      companiesRes = await db.query(
-        `SELECT handle,
-                name,
-                description,
-                num_employees AS "numEmployees",
-                logo_url AS "logoUrl"
-         FROM companies
-         WHERE name ILIKE $1 AND num_employees <= $2`,
-         [`%${nameLike}%`, maxEmployees]
-      );
 
-    } else if (!(nameLike) && minEmployees && !(maxEmployees)) {
-      companiesRes = await db.query(
-        `SELECT handle,
-                name,
-                description,
-                num_employees AS "numEmployees",
-                logo_url AS "logoUrl"
-         FROM companies
-         WHERE num_employees >= $1`,
-         [minEmployees]
-      );
+    q += " ORDER BY name";
 
-    } else if (!(nameLike) && !(minEmployees) && maxEmployees) {
-      companiesRes = await db.query(
-        `SELECT handle,
-                name,
-                description,
-                num_employees AS "numEmployees",
-                logo_url AS "logoUrl"
-         FROM companies
-         WHERE num_employees <= $1`,
-         [maxEmployees]
-      );
-
-    } else if (!(nameLike) && minEmployees && maxEmployees) {
-      companiesRes = await db.query(
-        `SELECT handle,
-                name,
-                description,
-                num_employees AS "numEmployees",
-                logo_url AS "logoUrl"
-         FROM companies
-         WHERE num_employees >= $1 AND num_employees <= $2`,
-         [minEmployees], [maxEmployees]
-      );
-    } else {
-      console.log('We got to the end of the giant if/else block!');
-      // If there aren't any filters, this query gets list of all companies.
-      companiesRes = await db.query(`
-      SELECT handle,
-             name,
-             description,
-             num_employees AS "numEmployees",
-             logo_url      AS "logoUrl"
-      FROM companies
-      ORDER BY name`);
-    }
-
+    let companiesRes = await db.query(q);
 
     return companiesRes.rows;
   }
