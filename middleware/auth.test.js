@@ -5,6 +5,7 @@ const { UnauthorizedError } = require("../expressError");
 const {
   authenticateJWT,
   ensureLoggedIn,
+  ensureAdmin
 } = require("./auth");
 
 
@@ -75,6 +76,12 @@ describe("ensureAdmin", function(){
     const req ={};
     const res = ({ locals: {user: {isAdmin: true}}});
     ensureAdmin(req, res, next);
+  })
+
+  test("unauth if no admin property", function(){
+    const req ={};
+    const res = ({ locals: { user: { }}});
+    expect(() => ensureAdmin(req, res, next)).toThrow(UnauthorizedError);
   })
 
   test("unauth if not admin", function(){

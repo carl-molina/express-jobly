@@ -44,12 +44,14 @@ function ensureLoggedIn(req, res, next) {
  *
  * If not, reaises Unauthorized.
  */
-function ensureAdmin(req, res, next){
-
+function ensureAdmin(req, res, next) {
+  if (res.locals.user?.isAdmin) return next();
+  throw new UnauthorizedError();
 }
 
 
 module.exports = {
   authenticateJWT,
   ensureLoggedIn,
+  ensureAdmin
 };

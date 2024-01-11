@@ -14,6 +14,10 @@ const userUpdateSchema = require("../schemas/userUpdate.json");
 
 const router = express.Router();
 
+// TODO: currently here post-lunch
+// TODO: creating users should only be permitted by admins
+// TODO: registering is for everyone, though
+
 
 /** POST / { user }  => { user, token }
  *
@@ -24,7 +28,7 @@ const router = express.Router();
  * This returns the newly created user and an authentication token for them:
  *  {user: { username, firstName, lastName, email, isAdmin }, token }
  *
- * Authorization required: login
+ * Authorization required: login, admin
  **/
 
 router.post("/", ensureLoggedIn, async function (req, res, next) {
