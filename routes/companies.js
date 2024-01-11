@@ -55,26 +55,26 @@ router.get("/", async function (req, res, next) {
 
   const q = req.query;
 
-  if (q.minEmployees > q.maxEmployees) {
-    throw new BadRequestError('Min cannot be more than max');
-  }
-
   if (q.minEmployees !== undefined && (!isNaN(Number(q.minEmployees)))) {
     q.minEmployees = Number(q.minEmployees);
-    console.log('This is q.minEmployyes', q.minEmployees);
-    console.log('This is typeof q.minEmployyes', typeof q.minEmployees);
   }
   if (q.maxEmployees !== undefined && (!isNaN(Number(q.maxEmployees)))) {
     q.maxEmployees = Number(q.maxEmployees);
   }
 
-  const validator = jsonschema.validate(q, companySearchSchema, {required: true});
+  if (q.minEmployees > q.maxEmployees) {
+    throw new BadRequestError('Min cannot be more than max');
+  }
+
+  const validator = jsonschema.validate(
+                                        q,
+                                        companySearchSchema,
+                                        {required: true});
   if (!validator.valid) {
     const errs = validator.errors.map(err => err.stack);
     throw new BadRequestError(errs);
   }
 
-  // TODO: we're here
   const companies = await Company.findAll(q);
 
   return res.json({ companies });

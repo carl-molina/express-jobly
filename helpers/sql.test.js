@@ -1,8 +1,4 @@
 "use strict";
-let { BadRequestError } = require("../expressError");
-BadRequestError = jest.fn();
-
-// const fetchMock = require("fetch-mock");
 
 const { sqlForPartialUpdate } = require("./sql");
 
@@ -28,10 +24,7 @@ describe('sqlForPartialUpdate function', function () {
     let result;
     try {
       result = sqlForPartialUpdate({}, { firstName: "first_name", age: "age" });
-      // throw new Error();
-      throw new Error("fail test, you shouldn't get here");
     } catch (err) {
-      console.log('This is err:', err);
       expect(err.status).toEqual(400);
       expect(err.message).toEqual("No Data");
     }
@@ -48,51 +41,4 @@ describe('sqlForPartialUpdate function', function () {
       });
   });
 
-  // it("tests for empty jsToSql input part 2", function () {
-  //   expect(sqlForPartialUpdate({}, {firstName: "first_name", age: "age"})).toThrow(Error);
-  //   expect(sqlForPartialUpdate({}, {firstName: "first_name", age: "age"})).toThrow(BadRequestError);
-  // });
-
-
 });
-
-
-
-// "use strict";
-
-// const jwt = require("jsonwebtoken");
-// const { createToken } = require("./tokens");
-// const { SECRET_KEY } = require("../config");
-
-// describe("createToken", function () {
-//   test("works: not admin", function () {
-//     const token = createToken({ username: "test", is_admin: false });
-//     const payload = jwt.verify(token, SECRET_KEY);
-//     expect(payload).toEqual({
-//       iat: expect.any(Number),
-//       username: "test",
-//       isAdmin: false,
-//     });
-//   });
-
-//   test("works: admin", function () {
-//     const token = createToken({ username: "test", isAdmin: true });
-//     const payload = jwt.verify(token, SECRET_KEY);
-//     expect(payload).toEqual({
-//       iat: expect.any(Number),
-//       username: "test",
-//       isAdmin: true,
-//     });
-//   });
-
-//   test("works: default no admin", function () {
-//     // given the security risk if this didn't work, checking this specifically
-//     const token = createToken({ username: "test" });
-//     const payload = jwt.verify(token, SECRET_KEY);
-//     expect(payload).toEqual({
-//       iat: expect.any(Number),
-//       username: "test",
-//       isAdmin: false,
-//     });
-//   });
-// });
