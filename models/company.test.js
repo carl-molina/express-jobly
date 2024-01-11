@@ -193,6 +193,8 @@ describe("findAll", function () {
     expect(companies).toEqual([]);
   });
 
+  // TODO: add tests first for minEmployees and maxEmployees
+
 });
 
 /************************************** get */

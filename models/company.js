@@ -78,12 +78,14 @@ class Company {
     }
 
     if (minEmployees) {
+      // TODO: change conditional to include 0
       filtersCount++;
       queryFilters.push(minEmployees);
       where.push(`num_employees >= $${filtersCount}`);
     }
 
     if (maxEmployees) {
+      // TODO: search for job that has 0 employees? Need to check that
       filtersCount++;
       queryFilters.push(maxEmployees);
       where.push(`num_employees <= $${filtersCount}`);
