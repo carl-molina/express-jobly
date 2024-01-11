@@ -10,6 +10,8 @@ const { BadRequestError } = require("../expressError");
  *
  *  Takes in an object (jsToSql) like:
  *    { firstName: first_name, age: age }
+ *  // TODO: age: age are strings, suggest that
+ *  // TODO: you don't need to put in every field in jsToSql
  *
  *  Calling this function helps format the SET clause of a SQL UPDATE.
  *

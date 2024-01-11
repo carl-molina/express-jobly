@@ -71,6 +71,7 @@ class Company {
 
     if (nameLike) where.push(`name ILIKE '%${nameLike}%'`);
     if (minEmployees) where.push(`num_employees >= ${minEmployees}`);
+    if (minEmployees) where.push(`num_employees >= $2`);
     if (maxEmployees) where.push(`num_employees <= ${maxEmployees}`);
 
     if (where.length !== 0){
@@ -79,7 +80,8 @@ class Company {
 
     q += " ORDER BY name";
 
-    const companiesRes = await db.query(q);
+    const companiesRes = await db.query(q, []);
+    // TODO: call query w/ paramaterized queries to avoid SQL injection
 
     return companiesRes.rows;
   }
