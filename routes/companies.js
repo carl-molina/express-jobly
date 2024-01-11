@@ -67,9 +67,8 @@ router.get("/", async function (req, res, next) {
   }
 
   const validator = jsonschema.validate(
-                                        q,
-                                        companySearchSchema,
-                                        {required: true});
+    q, companySearchSchema, {required: true});
+
   if (!validator.valid) {
     const errs = validator.errors.map(err => err.stack);
     throw new BadRequestError(errs);

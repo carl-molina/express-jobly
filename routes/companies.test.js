@@ -64,7 +64,7 @@ describe("POST /companies", function () {
 });
 
 /************************************** GET /companies */
-// TODO: add test for min greater than max
+
 describe("GET /companies", function () {
   test("ok for anon", async function () {
     const resp = await request(app).get("/companies");
@@ -96,8 +96,7 @@ describe("GET /companies", function () {
     });
   });
 
-  // TODO:may need more tests
-  test("vaid search values", async function () {
+  test("valid search values", async function () {
     const resp = await request(app)
     .get("/companies")
     .query({ nameLike: "C", minEmployees: 2, maxEmployees: 3});
@@ -148,7 +147,7 @@ describe("GET /companies", function () {
       .query({ minEmployees: 2, maxEmployees: 1 });
     expect(resp.statusCode).toEqual(400);
     expect(resp.body.error.message).toEqual("Min cannot be more than max")
-  })
+  });
 
 });
 
