@@ -56,67 +56,27 @@ class Company {
    * */
 
   static async findAll(query = {}) {
+
     const { nameLike, minEmployees, maxEmployees } = query;
 
-    let q = `
-    SELECT handle,
-            name,
-           description,
-          num_employees AS "numEmployees",
-          logo_url AS "logoUrl"
-    FROM companies`;
+    const { q, queryParams } = this._createQueryAndParams({nameLike, minEmployees, maxEmployees});
 
-    const where = [];
-    const queryFilters = [];
-
-    let filtersCount = 0;
-
-    if (nameLike) {
-      filtersCount++;
-      queryFilters.push(`%${nameLike}%`);
-      where.push(`name ILIKE $${filtersCount}`);
-    }
-
-    if (minEmployees) {
-      // TODO: change conditional to include 0
-      filtersCount++;
-      queryFilters.push(minEmployees);
-      where.push(`num_employees >= $${filtersCount}`);
-    }
-
-    if (maxEmployees) {
-      // TODO: search for job that has 0 employees? Need to check that
-      filtersCount++;
-      queryFilters.push(maxEmployees);
-      where.push(`num_employees <= $${filtersCount}`);
-    }
-
-    if (where.length !== 0) {
-        q += " WHERE " + where.join(" AND ");
-      }
-
-      q += " ORDER BY name;";
-
-    const companiesRes = await db.query(q, queryFilters);
+    const companiesRes = await db.query(q, queryParams);
 
     return companiesRes.rows;
-
-    // old code for reference:
-    // const { nameLike, minEmployees, maxEmployees } = query;
-    // const { q, queryFilters } = this.getQueryFilters({nameLike, minEmployees, maxEmployees});
-    // const companiesRes = await db.query(q, queryFilters);
-    // return companiesRes.rows;
   }
 
   /** getQueryFilters
    *
-   *  gets query filters from passed in paramters.
+   *  Gets query filters from passed in parameters if given.
+   *
+   *  Returns query string and added parameters if given.
    */
 
-  static _getQueryFilters({nameLike, minEmployees, maxEmployees}) {
+  static _createQueryAndParams({nameLike, minEmployees, maxEmployees}) {
 
-    const where = [];
-    const queryFilters = [];
+    const whereClause = [];
+    const queryParams = [];
     let filtersCount = 0;
 
     let q = `
@@ -129,29 +89,29 @@ class Company {
 
     if (nameLike) {
       filtersCount++;
-      queryFilters.push(`%${nameLike}%`);
-      where.push(`name ILIKE $${filtersCount}`);
+      queryParams.push(`%${nameLike}%`);
+      whereClause.push(`name ILIKE $${filtersCount}`);
     }
 
-    if (minEmployees) {
+    if (minEmployees !== undefined) {
       filtersCount++;
-      queryFilters.push(minEmployees);
-      where.push(`num_employees >= $${filtersCount}`);
+      queryParams.push(minEmployees);
+      whereClause.push(`num_employees >= $${filtersCount}`);
     }
 
-    if (maxEmployees) {
+    if (maxEmployees !== undefined) {
       filtersCount++;
-      queryFilters.push(maxEmployees);
-      where.push(`num_employees <= $${filtersCount}`);
+      queryParams.push(maxEmployees);
+      whereClause.push(`num_employees <= $${filtersCount}`);
     }
 
-    if (where.length !== 0) {
-        q += " WHERE " + where.join(" AND ");
+    if (whereClause.length !== 0) {
+        q += " WHERE " + whereClause.join(" AND ");
       }
 
       q += " ORDER BY name;";
 
-    return {q, queryFilters}
+    return {q, queryParams}
 
   }
 
