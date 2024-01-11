@@ -6,12 +6,10 @@ const { BadRequestError } = require("../expressError");
  *  sqlForPartialUpdate:
  *
  *  Takes in a an object(dataToUpdate) like:
- *    { firstName: 'Aliya', age: 32 }
+ *    { firstName: 'Aliya', isAdmin: true }
  *
  *  Takes in an object (jsToSql) like:
- *    { firstName: first_name, age: age }
- *  // TODO: age: age are strings, suggest that
- *  // TODO: you don't need to put in every field in jsToSql
+ *    { firstName: 'first_name', isAdmin: 'is_admin' }
  *
  *  Calling this function helps format the SET clause of a SQL UPDATE.
  *

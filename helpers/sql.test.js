@@ -1,5 +1,6 @@
 "use strict";
 
+const { BadRequestError } = require("../expressError");
 const { sqlForPartialUpdate } = require("./sql");
 
 console.error = jest.fn();
@@ -9,40 +10,37 @@ describe('sqlForPartialUpdate function', function () {
   it("tests for valid input", function () {
 
     const result = sqlForPartialUpdate(
-      { firstName: 'Aliyah', age: 32 },
-      { firstName: "first_name", age: "age" }
-      // TODO: don't pass in age yourself
+      { firstName: 'Aliyah', isAdmin: true },
+      { firstName: "first_name", isAdmin: "is_admin" }
     );
 
     expect(result).toEqual({
-      setCols: "\"first_name\"=$1, \"age\"=$2",
-      // TODO: use single quotes at ends of strings to get rid of delimiter
-      values: ['Aliyah', 32]
+      setCols: '"first_name"=$1, "is_admin"=$2',
+      values: ['Aliyah', true]
     });
   });
 
   it("tests for invalid input", function () {
 
-    let result = 'Should be reset';
-    // TODO: ^ can check if result is still this
+    let result = "Shouldn't reach here";
+
     try {
-      result = sqlForPartialUpdate({}, { firstName: "first_name", age: "age" });
-      // shouldn't get here:
-      expect(true).toEqual(false);
+      sqlForPartialUpdate({}, { firstName: "first_name", age: "age" });
+      throw new Error("fail test, shouldn't get here");
+
     } catch (err) {
-      expect(err.status).toEqual(400);
-      expect(err.message).toEqual("No Data");
+      expect(err instanceof BadRequestError).toBeTruthy();
     }
-    // expect(result).toEqual(undefined);
+    expect(result).toEqual("Shouldn't reach here");
   });
 
   it("tests for empty jsToSql input", function () {
-    const result = sqlForPartialUpdate({ firstName: 'Aliyah', age: 32 }, {});
+    const result = sqlForPartialUpdate({ firstName: 'Aliyah', isAdmin: true }, {});
 
     expect(result).toEqual(
       {
-        setCols: "\"firstName\"=$1, \"age\"=$2",
-        values: ['Aliyah', 32]
+        setCols: '"firstName"=$1, "isAdmin"=$2',
+        values: ['Aliyah', true]
       });
   });
 
