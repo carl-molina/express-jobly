@@ -68,3 +68,18 @@ describe("ensureLoggedIn", function () {
         .toThrow(UnauthorizedError);
   });
 });
+
+
+describe("ensureAdmin", function(){
+  test("works if admin", function(){
+    const req ={};
+    const res = ({ locals: {user: {isAdmin: true}}});
+    ensureAdmin(req, res, next);
+  })
+
+  test("unauth if not admin", function(){
+    const req ={};
+    const res = ({ locals: {user: {isAdmin: false}}});
+    expect(() => ensureAdmin(req, res, next)).toThrow(UnauthorizedError);
+  })
+})

@@ -62,7 +62,7 @@ class Company {
 
     const { nameLike, minEmployees, maxEmployees } = query;
 
-    const { q, queryParams } = this._createQueryAndParams({nameLike, minEmployees, maxEmployees});
+    const { q, queryParams } = this._createSearchQueryAndParams({nameLike, minEmployees, maxEmployees});
 
     const companiesRes = await db.query(q, queryParams);
 
@@ -76,11 +76,10 @@ class Company {
    *  Returns query string and added parameters if given.
    */
 
-  static _createQueryAndParams({nameLike, minEmployees, maxEmployees}) {
-    // TODO: ^ be more descriptive for this fn name ("which query are we creating?")
+  static _createSearchQueryAndParams({nameLike, minEmployees, maxEmployees}) {
 
-    const whereClause = [];
-    // TODO: consider "whereClauseParts" since it's an array
+
+    const whereClauseParts = [];
     const queryParams = [];
     let filtersCount = 0;
 
@@ -95,23 +94,23 @@ class Company {
     if (nameLike) {
       filtersCount++;
       queryParams.push(`%${nameLike}%`);
-      whereClause.push(`name ILIKE $${filtersCount}`);
+      whereClauseParts.push(`name ILIKE $${filtersCount}`);
     }
 
     if (minEmployees !== undefined) {
       filtersCount++;
       queryParams.push(minEmployees);
-      whereClause.push(`num_employees >= $${filtersCount}`);
+      whereClauseParts.push(`num_employees >= $${filtersCount}`);
     }
 
     if (maxEmployees !== undefined) {
       filtersCount++;
       queryParams.push(maxEmployees);
-      whereClause.push(`num_employees <= $${filtersCount}`);
+      whereClauseParts.push(`num_employees <= $${filtersCount}`);
     }
 
-    if (whereClause.length !== 0) {
-        q += " WHERE " + whereClause.join(" AND ");
+    if (whereClauseParts.length !== 0) {
+        q += " WHERE " + whereClauseParts.join(" AND ");
       }
 
       q += " ORDER BY name;";

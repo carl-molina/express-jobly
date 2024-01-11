@@ -86,15 +86,33 @@ describe("findAll", function () {
     ]);
   });
 
+  test("works with filter", async function () {
+    let companies = await Company.findAll(
+      { nameLike: 'c',
+      minEmployees: 1,
+      maxEmployees: 2});
+    expect(companies).toEqual([
+      {
+        handle: "c1",
+        name: "C1",
+        description: "Desc1",
+        numEmployees: 1,
+        logoUrl: "http://c1.img",
+      },
+      {
+        handle: "c2",
+        name: "C2",
+        description: "Desc2",
+        numEmployees: 2,
+        logoUrl: "http://c2.img",
+      }
+    ]);
+  });
+
   test("works: filter by name-no matching companies", async function () {
     let companies = await Company.findAll({nameLike: "z"});
     expect(companies).toEqual([]);
   });
-
-  // TODO: consider adding more tests
-  // One test: add passing all 3 things in, do we get 1 specific thing back?
-
-  // TODO: add test, rename _createQueryAndParams..., add min > max into findAll()
 
 });
 
@@ -103,14 +121,14 @@ describe("findAll", function () {
 describe("_createQueryAndParams", function(){
 
   test("works with no filters", async function(){
-    let result = Company._createQueryAndParams({});
+    let result = Company._createSearchQueryAndParams({});
   expect(result.q)
     .not.toContain('WHERE');
   expect(result.queryParams).toEqual([]);
   });
 
   test("works with all filters", async function(){
-    let result = Company._createQueryAndParams(
+    let result = Company._createSearchQueryAndParams(
       { nameLike: 'c',
       minEmployees: 1,
       maxEmployees: 3})
@@ -120,38 +138,38 @@ describe("_createQueryAndParams", function(){
   });
 
   test("works with name filter", async function(){
-    let result = Company._createQueryAndParams({ nameLike: 'c'});
+    let result = Company._createSearchQueryAndParams({ nameLike: 'c'});
   console.log('This is result.q', result.q);
   expect(result.q).toContain('WHERE name ILIKE $1');
   expect(result.queryParams).toEqual(['%c%']);
   });
 
   test("works with minEmployees", async function(){
-    let result = Company._createQueryAndParams({ minEmployees: 2});
+    let result = Company._createSearchQueryAndParams({ minEmployees: 2});
   expect(result.q).toContain('WHERE num_employees >= $1');
   expect(result.queryParams).toEqual([2]);
   });
 
   test("works with maxEmployees", async function(){
-    let result = Company._createQueryAndParams({ maxEmployees: 2});
+    let result = Company._createSearchQueryAndParams({ maxEmployees: 2});
   expect(result.q).toContain('WHERE num_employees <= $1');
   expect(result.queryParams).toEqual([2]);
   });
 
   test("works with min and maxEmployees", async function(){
-    let result = Company._createQueryAndParams({ minEmployees: 1, maxEmployees: 3});
+    let result = Company._createSearchQueryAndParams({ minEmployees: 1, maxEmployees: 3});
   expect(result.q).toContain('WHERE num_employees >= $1 AND num_employees <= $2');
   expect(result.queryParams).toEqual([1, 3]);
   });
 
   test("works with name and maxEmployees", async function(){
-    let result = Company._createQueryAndParams({ nameLike: 'c', maxEmployees: 3});
+    let result = Company._createSearchQueryAndParams({ nameLike: 'c', maxEmployees: 3});
   expect(result.q).toContain('WHERE name ILIKE $1 AND num_employees <= $2');
   expect(result.queryParams).toEqual(['%c%', 3]);
   });
 
   test("works with name and minEmployees", async function(){
-    let result = Company._createQueryAndParams({ nameLike: 'c', minEmployees: 2});
+    let result = Company._createSearchQueryAndParams({ nameLike: 'c', minEmployees: 2});
   expect(result.q).toContain('WHERE name ILIKE $1 AND num_employees >= $2');
   expect(result.queryParams).toEqual(['%c%', 2]);
   });
