@@ -56,7 +56,6 @@ class Company {
    * */
 
   static async findAll(query = {}) {
-
     const { nameLike, minEmployees, maxEmployees } = query;
 
     let q = `
@@ -68,26 +67,90 @@ class Company {
     FROM companies`;
 
     const where = [];
+    const queryFilters = [];
 
-    if (nameLike) where.push(`name ILIKE '%${nameLike}%'`);
-    if (nameLike) where.push(`name ILIKE '$1'`);
+    let filtersCount = 0;
 
-    if (minEmployees) where.push(`num_employees >= ${minEmployees}`);
-    if (minEmployees) where.push(`num_employees >= $2`);
-
-    if (maxEmployees) where.push(`num_employees <= ${maxEmployees}`);
-    if (maxEmployees) where.push(`num_employees <= $3`);
-
-    if (where.length !== 0){
-      q += " WHERE " + where.join(" AND ");
+    if (nameLike) {
+      filtersCount++;
+      queryFilters.push(`%${nameLike}%`);
+      where.push(`name ILIKE $${filtersCount}`);
     }
 
-    q += " ORDER BY name";
+    if (minEmployees) {
+      filtersCount++;
+      queryFilters.push(minEmployees);
+      where.push(`num_employees >= $${filtersCount}`);
+    }
 
-    const companiesRes = await db.query(q, []);
-    // TODO: call query w/ paramaterized queries to avoid SQL injection
+    if (maxEmployees) {
+      filtersCount++;
+      queryFilters.push(maxEmployees);
+      where.push(`num_employees <= $${filtersCount}`);
+    }
+
+    if (where.length !== 0) {
+        q += " WHERE " + where.join(" AND ");
+      }
+
+      q += " ORDER BY name;";
+
+    const companiesRes = await db.query(q, queryFilters);
 
     return companiesRes.rows;
+
+    // old code for reference:
+    // const { nameLike, minEmployees, maxEmployees } = query;
+    // const { q, queryFilters } = this.getQueryFilters({nameLike, minEmployees, maxEmployees});
+    // const companiesRes = await db.query(q, queryFilters);
+    // return companiesRes.rows;
+  }
+
+  /** getQueryFilters
+   *
+   *  gets query filters from passed in paramters.
+   */
+
+  static getQueryFilters({nameLike, minEmployees, maxEmployees}) {
+
+    const where = [];
+    const queryFilters = [];
+    let filtersCount = 0;
+
+    let q = `
+    SELECT handle,
+            name,
+           description,
+          num_employees AS "numEmployees",
+          logo_url AS "logoUrl"
+    FROM companies`;
+
+    if (nameLike) {
+      filtersCount++;
+      queryFilters.push(`%${nameLike}%`);
+      where.push(`name ILIKE $${filtersCount}`);
+    }
+
+    if (minEmployees) {
+      filtersCount++;
+      queryFilters.push(minEmployees);
+      where.push(`num_employees >= $${filtersCount}`);
+    }
+
+    if (maxEmployees) {
+      filtersCount++;
+      queryFilters.push(maxEmployees);
+      where.push(`num_employees <= $${filtersCount}`);
+    }
+
+    if (where.length !== 0) {
+        q += " WHERE " + where.join(" AND ");
+      }
+
+      q += " ORDER BY name;";
+
+    return {q, queryFilters}
+
   }
 
   /** Given a company handle, return data about company.
