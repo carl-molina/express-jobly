@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1704938508498" clover="3.2.0">
-  <project timestamp="1704938508498" name="All files">
+<coverage generated="1704938562178" clover="3.2.0">
+  <project timestamp="1704938562178" name="All files">
     <metrics statements="302" coveredstatements="215" conditionals="89" coveredconditionals="48" methods="49" coveredmethods="30" elements="440" coveredelements="293" complexity="0" loc="302" ncloc="302" packages="5" files="13" classes="13"/>
     <package name="express-jobly">
       <metrics statements="50" coveredstatements="47" conditionals="18" coveredconditionals="9" methods="9" coveredmethods="7"/>

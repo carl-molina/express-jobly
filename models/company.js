@@ -113,7 +113,7 @@ class Company {
    *  gets query filters from passed in paramters.
    */
 
-  static getQueryFilters({nameLike, minEmployees, maxEmployees}) {
+  static _getQueryFilters({nameLike, minEmployees, maxEmployees}) {
 
     const where = [];
     const queryFilters = [];
