@@ -60,6 +60,15 @@ async function commonBeforeAll() {
     password: "password3",
     isAdmin: false,
   });
+  await User.register({
+    username: "admin_user",
+    firstName: "U3F-admin",
+    lastName: "U3L",
+    email: "user3@user.com",
+    password: "password3",
+    isAdmin: true,
+  });
+
 }
 
 async function commonBeforeEach() {
@@ -76,6 +85,7 @@ async function commonAfterAll() {
 
 
 const u1Token = createToken({ username: "u1", isAdmin: false });
+const adminToken = createToken({ username: "admin_user", isAdmin: true })
 
 
 module.exports = {
@@ -84,4 +94,5 @@ module.exports = {
   commonAfterEach,
   commonAfterAll,
   u1Token,
+  adminToken
 };
