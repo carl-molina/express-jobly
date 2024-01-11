@@ -23,7 +23,7 @@ const router = express.Router();
  * This returns the newly created user and an authentication token for them:
  *  {user: { username, firstName, lastName, email, isAdmin }, token }
  *
- * Authorization required: login, admin
+ * Authorization required:  admin
  **/
 
 router.post("/", ensureAdmin, async function (req, res, next) {
@@ -47,20 +47,20 @@ router.post("/", ensureAdmin, async function (req, res, next) {
  *
  * Returns list of all users.
  *
- * Authorization required: login
+ * Authorization required:  admin
  **/
 
-router.get("/", ensureLoggedIn, async function (req, res, next) {
+router.get("/", ensureAdmin, async function (req, res, next) {
   const users = await User.findAll();
   return res.json({ users });
 });
 
-
+// TODO:refactor tests afer esureloggedinoradmin id done
 /** GET /[username] => { user }
  *
  * Returns { username, firstName, lastName, email, isAdmin }
  *
- * Authorization required: login
+ * Authorization required: login or admin
  **/
 
 router.get("/:username", ensureLoggedIn, async function (req, res, next) {

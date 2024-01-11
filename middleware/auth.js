@@ -52,9 +52,27 @@ function ensureAdmin(req, res, next) {
   throw new UnauthorizedError();
 }
 
+/** Middleware to check if logged-in user matches params username or admin
+ *
+ * If not, raises Unauthorized.
+ */
+
+function ensureAdminOrCorrectUser(req, res, next){
+  const currentUser = res.locals.user;
+  const hasAuthorizedUsername = currentUser?.username === req.params.username;
+
+  //if we have logged in user && username === params username OR is Admin
+  if((currentUser && hasAuthorizedUsername) || currentUser?.isAdmin === true)  {
+    return next();
+  }
+
+  throw new UnauthorizedError();
+
+}
 
 module.exports = {
   authenticateJWT,
   ensureLoggedIn,
-  ensureAdmin
+  ensureAdmin,
+  ensureAdminOrCorrectUser
 };

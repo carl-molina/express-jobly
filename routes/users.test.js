@@ -129,10 +129,10 @@ describe("POST /users", function () {
 /************************************** GET /users */
 
 describe("GET /users", function () {
-  test("works for users", async function () {
+  test("works for admin", async function () {
     const resp = await request(app)
         .get("/users")
-        .set("authorization", `Bearer ${u1Token}`);
+        .set("authorization", `Bearer ${adminToken}`);
 
     console.log('This is resp.body', resp.body);
     expect(resp.body).toEqual({
@@ -169,6 +169,13 @@ describe("GET /users", function () {
     });
   });
 
+  test("unauth for non-admin", async function () {
+    const resp = await request(app)
+        .get("/users")
+        .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(401);
+  });
+
   test("unauth for anon", async function () {
     const resp = await request(app)
         .get("/users");
@@ -193,6 +200,21 @@ describe("GET /users/:username", function () {
       },
     });
   });
+
+  // test("works for admin", async function () {
+  //   const resp = await request(app)
+  //       .get(`/users/u1`)
+  //       .set("authorization", `Bearer ${adminToken}`);
+  //   expect(resp.body).toEqual({
+  //     user: {
+  //       username: "u1",
+  //       firstName: "U1F",
+  //       lastName: "U1L",
+  //       email: "user1@user.com",
+  //       isAdmin: false,
+  //     },
+  //   });
+  // });
 
   test("unauth for anon", async function () {
     const resp = await request(app)
