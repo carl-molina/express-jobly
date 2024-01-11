@@ -91,6 +91,11 @@ describe("findAll", function () {
     expect(companies).toEqual([]);
   });
 
+  // TODO: consider adding more tests
+  // One test: add passing all 3 things in, do we get 1 specific thing back?
+
+  // TODO: add test, rename _createQueryAndParams..., add min > max into findAll()
+
 });
 
 /************************************** _createQueryAndParams */

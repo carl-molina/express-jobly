@@ -57,6 +57,9 @@ class Company {
 
   static async findAll(query = {}) {
 
+  // TODO: consider having helper fn just create the WHERE clause
+  // Consider having default query string here (consider refactoring after sprint)
+
     const { nameLike, minEmployees, maxEmployees } = query;
 
     const { q, queryParams } = this._createQueryAndParams({nameLike, minEmployees, maxEmployees});
@@ -74,8 +77,10 @@ class Company {
    */
 
   static _createQueryAndParams({nameLike, minEmployees, maxEmployees}) {
+    // TODO: ^ be more descriptive for this fn name ("which query are we creating?")
 
     const whereClause = [];
+    // TODO: consider "whereClauseParts" since it's an array
     const queryParams = [];
     let filtersCount = 0;
 
