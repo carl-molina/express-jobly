@@ -61,14 +61,9 @@ function ensureAdminOrCorrectUser(req, res, next){
   const currentUser = res.locals.user;
   const hasAuthorizedUsername = currentUser?.username === req.params.username;
 
-  //if we have logged in user && username === params username OR is Admin
-  if((currentUser && hasAuthorizedUsername) || currentUser?.isAdmin === true)  {
-    // TODO: ^ add isAdmin check in && statement
-
-  if (currentUser && (hasAuthorizedUsername || currentUser?.isAdmin === true));
-  // TODO: short circuiting happening faster here
+  if (currentUser && (hasAuthorizedUsername || currentUser?.isAdmin === true)){
     return next();
-  }
+  };
 
   throw new UnauthorizedError();
 

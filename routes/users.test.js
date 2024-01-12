@@ -102,7 +102,7 @@ describe("POST /users", function () {
 
 
   // TODO: add user version
-  test("bad request if missing data", async function () {
+  test("bad request if missing data -for admin", async function () {
     const resp = await request(app)
         .post("/users")
         .send({
@@ -112,7 +112,17 @@ describe("POST /users", function () {
     expect(resp.statusCode).toEqual(400);
   });
 
-  test("bad request if invalid data", async function () {
+  test("unauth if missing data - for non-admin user", async function () {
+    const resp = await request(app)
+        .post("/users")
+        .send({
+          username: "u-new",
+        })
+        .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(401);
+  });
+
+  test("bad request if invalid data- for admin ", async function () {
     const resp = await request(app)
         .post("/users")
         .send({
@@ -125,6 +135,21 @@ describe("POST /users", function () {
         })
         .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(400);
+  });
+
+  test("unauth if invalid data- for non-admin user", async function () {
+    const resp = await request(app)
+        .post("/users")
+        .send({
+          username: "u-new",
+          firstName: "First-new",
+          lastName: "Last-newL",
+          password: "password-new",
+          email: "not-an-email",
+          isAdmin: true,
+        })
+        .set("authorization", `Bearer ${u1Token}`);
+    expect(resp.statusCode).toEqual(401);
   });
 });
 
