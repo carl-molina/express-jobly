@@ -15,7 +15,34 @@ class Job{
    *
    * Throws BadRequestError if no matching company_handle
    */
-  static async create({ title, salary, equity, company_handle }){
+  static async create({ title, salary, equity, companyHandle }){
+    const handleCheck = await db.query(
+      `SELECT company_handle
+        FROM jobs
+        WHERE company_handle = $1`,
+        [companyHandle]
+    )
+    if(handleCheck.rows.length === 0){
+      throw new BadRequestError(`No company_handle matching: ${companyHandle}`)
+    }
+
+    const result = await db.query(`
+    INSERT INTO  jobs (title,
+                      salary,
+                      equity,
+                      company_handle)
+    VALUES ($1, $2, $3, $4)
+    RETURNING
+        id,
+        title,
+        salary,
+        equity,
+        company_handle as companyHandle`,
+        [title, salary, equity, companyHandle]
+    );
+    const job = result.rows[0];
+
+    return job;
 
   }
   /**Finds all jobs.
@@ -59,4 +86,4 @@ class Job{
   }
 }
 
-module.exports = { Job };
+module.exports =  Job;

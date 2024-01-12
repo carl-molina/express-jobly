@@ -21,15 +21,16 @@ describe("create", function(){
     title: 'Job',
     salary: 100,
     equity: 0.5,
-    company_handle: 'c1'
+    companyHandle: 'c1'
   }
   const jobBadHandle = {
     title: 'Job No Handle',
     salary: 100,
     equity: 0.5,
-    company_handle: 'not_a_handle'
+    companyHandle: 'not_a_handle'
   }
-
+  // TODO: change equity received to string (WHY IS THIS HAPPENING)
+  //TODO: do something about the id (not as expected)
   test("works", async function(){
     let job = await Job.create(newJob);
     let jobId = Job.id;
@@ -46,7 +47,7 @@ describe("create", function(){
         title: 'Job',
         salary: 100,
         equity: 0.5,
-        company_handle: 'c1'
+        companyHandle: 'c1'
       }
     ]);
   });
