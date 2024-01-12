@@ -37,7 +37,10 @@ class Job{
         title,
         salary,
         equity,
-        company_handle as companyHandle`,
+        company_handle AS "companyHandle"`,
+        // FIXME: this is the bug! ^ If we're going to alias a column, we need
+        // to wrap the alias in quotations, otherwise SQL will convert
+        // companyHandle => companyhandle if it's not wrapped in quotes!!
         [title, salary, equity, companyHandle]
     );
     const job = result.rows[0];
