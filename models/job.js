@@ -2,6 +2,7 @@
 
 const db = require("../db");
 const { BadRequestError, NotFoundError } = require("../expressError");
+const { sqlForPartialUpdate } = require("../helpers/sql");
 // const { sqlForPartialUpdate } = require("../helpers/sql");
 
 /** Related functions for jobs */
@@ -127,7 +128,23 @@ return job;
    * Returns {id, title, salary, equity, company_handle}
    */
   static async update(id, data){
+    const { setCols, values } = sqlForPartialUpdate(data, {});
+    const idVarIdx = "$" + (values.length + 1);
 
+    const querySql = `
+        UPDATE jobs
+        SET ${setCols}
+        WHERE id = ${idVarIdx}
+        RETURNING id,
+                  title,
+                  salary,
+                  equity, company_handle as "companyHandle"`;
+    const result = await db.query(querySql, [...values, id]);
+    const job = result.rows[0];
+
+    if (!job) throw new NotFoundError(`No job: ${id}`);
+
+    return job;
   }
 
   /**Given a job id, remove job from db; returns undefined.

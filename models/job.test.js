@@ -8,6 +8,10 @@ const {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  // testJobs
+  // jobId1,
+  // jobId2,
+  // jobId3
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -125,7 +129,7 @@ describe("get", function () {
 
   test("not found if no such job", async function () {
     try {
-      await Job.get("nope");
+      await Job.get(0);
       throw new Error("fail test, you shouldn't get here");
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
@@ -139,7 +143,7 @@ describe("update", function () {
   const updateData = {
     title: "NewTitle",
     salary: 4000,
-    equity: 10.0,
+    equity: 0.3,
   };
 
   const updateDataSetNulls = {
@@ -148,25 +152,37 @@ describe("update", function () {
     equity: null,
   };
 
+  const newJob = {
+    title: 'Job',
+    salary: 100,
+    equity: 0.5,
+    companyHandle: 'c1'
+  };
+
   test("works", async function() {
-    let job = await Job.update(1, updateData);
+    const newJobData = await Job.create(newJob);
+    const newJobId = newJobData.id;
+
+    let job = await Job.update(newJobId, updateData);
     expect(job).toEqual({
-      id: 1,
-      company_handle: 'c1',
-      ...updateData,
+      id: newJobId,
+      companyHandle: 'c1',
+      title: "NewTitle",
+      salary: 4000,
+      equity: "0.3"
     });
 
     const result = await db.query(
         `SELECT id, title, salary, equity, company_handle
         FROM jobs
-        WHERE id = 1`
+        WHERE id = $1`, [newJobId]
     );
 
     expect(result.rows).toEqual([{
-      id: 1,
+      id: newJobId,
       title: "NewTitle",
       salary: 4000,
-      equity: 10.0,
+      equity: "0.3",
       company_handle: "c1"
     }]);
   });
