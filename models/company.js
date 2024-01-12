@@ -38,12 +38,12 @@ class Company {
                     description,
                     num_employees AS "numEmployees",
                     logo_url AS "logoUrl"`, [
-          handle,
-          name,
-          description,
-          numEmployees,
-          logoUrl,
-        ],
+      handle,
+      name,
+      description,
+      numEmployees,
+      logoUrl,
+    ],
     );
     const company = result.rows[0];
 
@@ -56,15 +56,30 @@ class Company {
    * */
 
   static async findAll(query = {}) {
-
-  // TODO: consider having helper fn just create the WHERE clause
-  // Consider having default query string here (consider refactoring after sprint)
-
     const { nameLike, minEmployees, maxEmployees } = query;
 
-    const { q, queryParams } = this._createSearchQueryAndParams({nameLike, minEmployees, maxEmployees});
+    if (minEmployees > maxEmployees) {
+      throw new BadRequestError('Min cannot be more than max');
+    }
 
-    const companiesRes = await db.query(q, queryParams);
+    let q = `
+      SELECT handle,
+              name,
+            description,
+            num_employees AS "numEmployees",
+            logo_url AS "logoUrl"
+      FROM companies`;
+
+    const { whereClause, queryParams } = this._createSearchQueryAndParams(
+      { nameLike, minEmployees, maxEmployees });
+
+    let companiesRes;
+    if (whereClause.length > 0) {
+      q += whereClause;
+      companiesRes = await db.query(q, queryParams);
+    } else {
+      companiesRes = await db.query(q);
+    }
 
     return companiesRes.rows;
   }
@@ -76,47 +91,33 @@ class Company {
    *  Returns query string and added parameters if given.
    */
 
-  static _createSearchQueryAndParams({nameLike, minEmployees, maxEmployees}) {
-
-
+  static _createSearchQueryAndParams({ nameLike, minEmployees, maxEmployees }) {
     const whereClauseParts = [];
     const queryParams = [];
-    let filtersCount = 0;
-
-    let q = `
-    SELECT handle,
-            name,
-           description,
-          num_employees AS "numEmployees",
-          logo_url AS "logoUrl"
-    FROM companies`;
+    let whereClause = "";
 
     if (nameLike) {
-      filtersCount++;
       queryParams.push(`%${nameLike}%`);
-      whereClauseParts.push(`name ILIKE $${filtersCount}`);
+      whereClauseParts.push(`name ILIKE $${queryParams.length}`);
     }
 
     if (minEmployees !== undefined) {
-      filtersCount++;
       queryParams.push(minEmployees);
-      whereClauseParts.push(`num_employees >= $${filtersCount}`);
+      whereClauseParts.push(`num_employees >= $${queryParams.length}`);
     }
 
     if (maxEmployees !== undefined) {
-      filtersCount++;
       queryParams.push(maxEmployees);
-      whereClauseParts.push(`num_employees <= $${filtersCount}`);
+      whereClauseParts.push(`num_employees <= $${queryParams.length}`);
     }
 
     if (whereClauseParts.length !== 0) {
-        q += " WHERE " + whereClauseParts.join(" AND ");
-      }
+      whereClause += " WHERE " + whereClauseParts.join(" AND ");
+    }
 
-      q += " ORDER BY name;";
+    whereClause += " ORDER BY name;";
 
-    return {q, queryParams}
-
+    return { whereClause, queryParams };
   }
 
   /** Given a company handle, return data about company.
@@ -158,11 +159,11 @@ class Company {
 
   static async update(handle, data) {
     const { setCols, values } = sqlForPartialUpdate(
-        data,
-        {
-          numEmployees: "num_employees",
-          logoUrl: "logo_url",
-        });
+      data,
+      {
+        numEmployees: "num_employees",
+        logoUrl: "logo_url",
+      });
     const handleVarIdx = "$" + (values.length + 1);
 
     const querySql = `

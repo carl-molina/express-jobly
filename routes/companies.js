@@ -62,12 +62,6 @@ router.get("/", async function (req, res, next) {
     q.maxEmployees = Number(q.maxEmployees);
   }
 
-  if (q.minEmployees > q.maxEmployees) {
-    throw new BadRequestError('Min cannot be more than max');
-  }
-  // TODO: ^ consider moving this to models Company.findAll() instead
-  // sending the right data, but can still include it in findAll() instead
-
   const validator = jsonschema.validate(
     q, companySearchSchema, {required: true});
 

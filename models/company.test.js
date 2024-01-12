@@ -110,67 +110,75 @@ describe("findAll", function () {
   });
 
   test("works: filter by name-no matching companies", async function () {
-    let companies = await Company.findAll({nameLike: "z"});
+    const companies = await Company.findAll({nameLike: "z"});
     expect(companies).toEqual([]);
   });
+
+  test("bad request if min employees > max employees", async function () {
+    try {
+      await Company.findAll({minEmployees: 3, maxEmployees: 1});
+      throw new Error("Shouldn't be getting here");
+    } catch (err) {
+      expect(err instanceof BadRequestError).toBeTruthy();
+    }
+  })
 
 });
 
 /************************************** _createQueryAndParams */
 
-describe("_createQueryAndParams", function(){
+describe("_createSearchQueryAndParams", function(){
 
   test("works with no filters", async function(){
-    let result = Company._createSearchQueryAndParams({});
-  expect(result.q)
+    const result = Company._createSearchQueryAndParams({});
+  expect(result.whereClause)
     .not.toContain('WHERE');
   expect(result.queryParams).toEqual([]);
   });
 
   test("works with all filters", async function(){
-    let result = Company._createSearchQueryAndParams(
+    const result = Company._createSearchQueryAndParams(
       { nameLike: 'c',
       minEmployees: 1,
       maxEmployees: 3})
-  expect(result.q)
-    .toContain('WHERE name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3');
+  expect(result.whereClause)
+    .toEqual(' WHERE name ILIKE $1 AND num_employees >= $2 AND num_employees <= $3 ORDER BY name;');
   expect(result.queryParams).toEqual(['%c%', 1, 3]);
   });
 
   test("works with name filter", async function(){
-    let result = Company._createSearchQueryAndParams({ nameLike: 'c'});
-  console.log('This is result.q', result.q);
-  expect(result.q).toContain('WHERE name ILIKE $1');
+    const result = Company._createSearchQueryAndParams({ nameLike: 'c'});
+  expect(result.whereClause).toEqual(' WHERE name ILIKE $1 ORDER BY name;');
   expect(result.queryParams).toEqual(['%c%']);
   });
 
   test("works with minEmployees", async function(){
-    let result = Company._createSearchQueryAndParams({ minEmployees: 2});
-  expect(result.q).toContain('WHERE num_employees >= $1');
+    const result = Company._createSearchQueryAndParams({ minEmployees: 2});
+  expect(result.whereClause).toEqual(' WHERE num_employees >= $1 ORDER BY name;');
   expect(result.queryParams).toEqual([2]);
   });
 
   test("works with maxEmployees", async function(){
-    let result = Company._createSearchQueryAndParams({ maxEmployees: 2});
-  expect(result.q).toContain('WHERE num_employees <= $1');
+    const result = Company._createSearchQueryAndParams({ maxEmployees: 2});
+  expect(result.whereClause).toEqual(' WHERE num_employees <= $1 ORDER BY name;');
   expect(result.queryParams).toEqual([2]);
   });
 
   test("works with min and maxEmployees", async function(){
-    let result = Company._createSearchQueryAndParams({ minEmployees: 1, maxEmployees: 3});
-  expect(result.q).toContain('WHERE num_employees >= $1 AND num_employees <= $2');
+    const result = Company._createSearchQueryAndParams({ minEmployees: 1, maxEmployees: 3});
+  expect(result.whereClause).toEqual(' WHERE num_employees >= $1 AND num_employees <= $2 ORDER BY name;');
   expect(result.queryParams).toEqual([1, 3]);
   });
 
   test("works with name and maxEmployees", async function(){
-    let result = Company._createSearchQueryAndParams({ nameLike: 'c', maxEmployees: 3});
-  expect(result.q).toContain('WHERE name ILIKE $1 AND num_employees <= $2');
+    const result = Company._createSearchQueryAndParams({ nameLike: 'c', maxEmployees: 3});
+  expect(result.whereClause).toEqual(' WHERE name ILIKE $1 AND num_employees <= $2 ORDER BY name;');
   expect(result.queryParams).toEqual(['%c%', 3]);
   });
 
   test("works with name and minEmployees", async function(){
-    let result = Company._createSearchQueryAndParams({ nameLike: 'c', minEmployees: 2});
-  expect(result.q).toContain('WHERE name ILIKE $1 AND num_employees >= $2');
+    const result = Company._createSearchQueryAndParams({ nameLike: 'c', minEmployees: 2});
+  expect(result.whereClause).toEqual(' WHERE name ILIKE $1 AND num_employees >= $2 ORDER BY name;');
   expect(result.queryParams).toEqual(['%c%', 2]);
   });
 
