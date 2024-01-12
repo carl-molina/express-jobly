@@ -220,6 +220,7 @@ describe("PATCH /companies/:handle", function () {
   });
 
   test("does not work for non-admin user", async function () {
+    // TODO: follow pattern "works/unauth"
     const resp = await request(app)
       .patch(`/companies/c1`)
       .send({
@@ -239,6 +240,8 @@ describe("PATCH /companies/:handle", function () {
     expect(resp.statusCode).toEqual(401);
   });
 
+  // TODO: write additional test for 'user, not found on no such company (401)'
+  // a non-admin user should not be allowed a 404, they should get a 401
   test("admin, not found on no such company", async function () {
     const resp = await request(app)
       .patch(`/companies/nope`)
@@ -294,6 +297,7 @@ describe("DELETE /companies/:handle", function () {
     expect(resp.statusCode).toEqual(401);
   });
 
+  // TODO: for admin, make test for user to get different status code
   test("not found for no such company", async function () {
     const resp = await request(app)
       .delete(`/companies/nope`)

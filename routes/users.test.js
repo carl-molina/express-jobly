@@ -100,6 +100,8 @@ describe("POST /users", function () {
     expect(resp.statusCode).toEqual(401);
   });
 
+
+  // TODO: add user version
   test("bad request if missing data", async function () {
     const resp = await request(app)
         .post("/users")
@@ -244,6 +246,7 @@ describe("GET /users/:username", function () {
     expect(resp.statusCode).toEqual(401);
   });
 
+    // TODO: add user version
   test("not found if user not found by admin", async function () {
     const resp = await request(app)
         .get(`/users/nope`)
@@ -273,6 +276,7 @@ describe("PATCH /users/:username", () => {
     });
   });
 
+  // TODO: user "unauth" pattern
   test("does not work for user w/ different username", async function () {
     const resp = await request(app)
         .patch(`/users/u2`)
@@ -328,6 +332,7 @@ describe("PATCH /users/:username", () => {
     expect(resp.statusCode).toEqual(401);
   });
 
+    // TODO: add user version
   test("not found if no such user", async function () {
     const resp = await request(app)
         .patch(`/users/nope`)
@@ -406,6 +411,7 @@ describe("DELETE /users/:username", function () {
     expect(resp.statusCode).toEqual(401);
   });
 
+    // TODO: add user version
   test("not found if user missing", async function () {
     const resp = await request(app)
         .delete(`/users/nope`)

@@ -63,6 +63,10 @@ function ensureAdminOrCorrectUser(req, res, next){
 
   //if we have logged in user && username === params username OR is Admin
   if((currentUser && hasAuthorizedUsername) || currentUser?.isAdmin === true)  {
+    // TODO: ^ add isAdmin check in && statement
+
+  if (currentUser && (hasAuthorizedUsername || currentUser?.isAdmin === true));
+  // TODO: short circuiting happening faster here
     return next();
   }
 
