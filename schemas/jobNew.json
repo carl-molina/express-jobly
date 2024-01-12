@@ -17,8 +17,7 @@
       },
       "companyHandle": {
         "type": "string",
-        "minLength": 1,
-        "maxLength": 10
+        "minLength": 1
       }
     },
     "additionalProperties": false,

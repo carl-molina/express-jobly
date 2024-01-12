@@ -29,11 +29,13 @@ describe("POST /jobs", function(){
     companyHandle: "c1"
   };
 
+  // TODO: we're here
   test("ok for admin", async function () {
     const resp = await request(app)
       .post("/jobs")
       .send(newJob)
       .set("authorization", `Bearer ${adminToken}`);
+    // TODO: this is where it breaks
     expect(resp.statusCode).toEqual(201);
     expect(resp.body).toEqual({
       job: {
