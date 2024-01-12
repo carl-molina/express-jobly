@@ -17,7 +17,7 @@ class Job{
    */
   static async create({ title, salary, equity, companyHandle }){
     const handleCheck = await db.query(
-      `SELECT company_handle
+      `SELECT company_handle AS "companyHandle"
         FROM jobs
         WHERE company_handle = $1`,
         [companyHandle]
@@ -38,9 +38,6 @@ class Job{
         salary,
         equity,
         company_handle AS "companyHandle"`,
-        // FIXME: this is the bug! ^ If we're going to alias a column, we need
-        // to wrap the alias in quotations, otherwise SQL will convert
-        // companyHandle => companyhandle if it's not wrapped in quotes!!
         [title, salary, equity, companyHandle]
     );
     const job = result.rows[0];
@@ -54,16 +51,70 @@ class Job{
    *
    * */
 
-  static async findAll(){
+  static async findAll() {
 
+    const jobsRes = await db.query(
+      `SELECT id, title, salary, equity, company_handle
+      FROM jobs`
+    )
+
+    return jobsRes.rows;
+
+
+    // TODO: for GET /companies/:handle later
+    // const jobsForCompany = await db.query(
+    //   `SELECT j.id, j.title, j.salary, j.equity
+    //   FROM jobs AS j
+    //   INNER JOIN companies ON c.handle = j.company_handle`
+    // )
+
+    // jobsRes.jobs = jobsForCompany;
+
+
+
+    // TODO: filtering version of findAll:
+    // const { title, minSalary, hasEquity } = query;
+
+    // let q = `
+    //   SELECT handle,
+    //           name,
+    //         description,
+    //         num_employees AS "numEmployees",
+    //         logo_url AS "logoUrl"
+    //   FROM companies`;
+
+    // const { whereClause, queryParams } = this._createSearchQueryAndParams(
+    //   { nameLike, minEmployees, maxEmployees });
+
+    // let companiesRes;
+    // if (whereClause.length > 0) {
+    //   q += whereClause;
+    //   companiesRes = await db.query(q, queryParams);
+    // } else {
+    //   companiesRes = await db.query(q);
+    // }
+
+    // return companiesRes.rows;
   }
 
-  /**Given a job  id, return data about that job
+  /**Given a job id, return data about that job
    *
    * Returns {title, salary, equity, company_handle}
   */
-  static async get(id){
+  static async get(id) {
+    const jobsRes = await db.query(`
+    SELECT title,
+           salary,
+           equity,
+           company_handle AS "companyHandle"
+    FROM jobs
+    WHERE id = $1`, [id]);
 
+const job = jobsRes.rows[0];
+
+if (!job) throw new NotFoundError(`No job: ${id}`);
+
+return job;
   }
 
   /**Given a job id and data, update company with data
