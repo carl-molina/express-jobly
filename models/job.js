@@ -20,7 +20,7 @@ class Job{
   }
   /**Finds all jobs.
    *
-   * Returns all job data {[{title, salary, equity, company_handle},...]}
+   * Returns all job data [{id, title, salary, equity, company_handle},...]
    *
    * */
 
