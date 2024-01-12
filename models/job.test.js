@@ -188,21 +188,23 @@ describe("update", function () {
   });
 
   test("works: null fields", async function () {
-    let job = await Job.update(1, updateDataSetNulls);
+    const newJobData = await Job.create(newJob);
+    const newJobId = newJobData.id;
+    let job = await Job.update(newJobId, updateDataSetNulls);
     expect(job).toEqual({
-      id: 1,
-      company_handle: 'c1',
+      id: newJobId,
+      companyHandle: 'c1',
       ...updateDataSetNulls,
     });
 
     const result = await db.query(
       `SELECT id, title, salary, equity, company_handle
       FROM jobs
-      WHERE id = 1`
+      WHERE id = $1`, [newJobId]
   );
 
     expect(result.rows).toEqual([{
-      id: 1,
+      id: newJobId,
       title: "NewTitle",
       salary: null,
       equity: null,
@@ -212,7 +214,7 @@ describe("update", function () {
 
   test("not found if no such job", async function () {
     try {
-      await Job.update("nope", updateData);
+      await Job.update(0, updateData);
       throw new Error("fail test, you shouldn't get here");
     } catch (err) {
       expect (err instanceof NotFoundError).toBeTruthy();
@@ -232,16 +234,28 @@ describe("update", function () {
 /************************************** remove */
 
 describe("remove", function() {
+
+  const newJob = {
+    title: 'Job',
+    salary: 100,
+    equity: 0.5,
+    companyHandle: 'c1'
+  };
+
   test("works", async function () {
-    await Job.remove(1);
+
+    const newJobData = await Job.create(newJob);
+    const newJobId = newJobData.id;
+
+    await Job.remove(newJobId);
     const res = await db.query(
-      "SELECT id FROM jobs WHERE id=1");
+      "SELECT id FROM jobs WHERE id=$1", [newJobId]);
     expect(res.rows.length).toEqual(0);
   });
 
   test("not found if no such company", async function () {
     try {
-      await Job.remove("nope");
+      await Job.remove(0);
       throw new Error("fail test, you shouldn't get here");
     } catch (err) {
       expect(err instanceof NotFoundError).toBeTruthy();
