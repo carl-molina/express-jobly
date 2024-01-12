@@ -16,6 +16,7 @@ const { UnauthorizedError } = require("../expressError");
  */
 
 function authenticateJWT(req, res, next) {
+  console.log("req.headers", req.headers)
   const authHeader = req.headers?.authorization;
   if (authHeader) {
     const token = authHeader.replace(/^[Bb]earer /, "").trim();
@@ -45,6 +46,7 @@ function ensureLoggedIn(req, res, next) {
  * If not, reaises Unauthorized.
  */
 function ensureAdmin(req, res, next) {
+  console.log("username and isadmin", res.locals.user?.username, res.locals.user?.isAdmin)
   if (res.locals.user?.username && res.locals.user?.isAdmin === true){
     return next();
   }
