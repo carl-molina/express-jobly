@@ -46,7 +46,7 @@ class Job{
   static async findAll() {
 
     const jobsRes = await db.query(
-      `SELECT id, title, salary, equity, company_handle
+      `SELECT id, title, salary, equity, company_handle AS "companyHandle"
       FROM jobs`
     )
 
@@ -95,7 +95,8 @@ class Job{
   */
   static async get(id) {
     const jobsRes = await db.query(`
-    SELECT title,
+    SELECT id,
+          title,
            salary,
            equity,
            company_handle AS "companyHandle"

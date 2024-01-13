@@ -4,6 +4,7 @@ const request = require("supertest");
 
 const db = require("../db");
 const app = require("../app");
+const Job = require("../models/job")
 
 const {
   commonBeforeAll,
@@ -79,3 +80,55 @@ describe("POST /jobs", function(){
     expect(resp.statusCode).toEqual(400);
   });
 })
+
+/************************************** GET /jobs */
+
+describe("GET /jobs", function () {
+  test("ok for anon", async function () {
+    const resp = await request(app).get("/jobs");
+    expect(resp.body).toEqual({
+      jobs:
+        [
+          {
+            id: expect.any(Number),
+            title: "c1 job",
+            salary: 10,
+            equity: "0.2",
+            companyHandle: "c1"
+          }
+        ],
+    });
+  });
+
+});
+
+describe("GET /jobs/:id", function () {
+  const newJob = {
+    title: "new job 4",
+    salary: 100,
+    equity: 0.5,
+    companyHandle: "c1"
+}
+
+  test("works for anon", async function () {
+    let newJobData = await Job.create(newJob);
+    let newJobId = newJobData.id;
+
+    const resp = await request(app).get(`/jobs/${newJobId}`);
+    expect(resp.body).toEqual({
+      job: {
+        id: newJobId,
+        title: "new job 4",
+        salary: 100,
+        equity: "0.5",
+        companyHandle: "c1"
+      }
+    });
+  });
+
+
+  test("not found for no such job", async function () {
+    const resp = await request(app).get(`/jobs/0`);
+    expect(resp.statusCode).toEqual(404);
+  });
+});
