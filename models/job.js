@@ -18,38 +18,6 @@ class Job{
    */
   static async create({ title, salary, equity, companyHandle }){
 
-    // console.log('title', title);
-    // console.log('salary', salary);
-    // console.log('equity', equity);
-    // console.log('companyHandle', companyHandle);
-
-
-    // const allJobs = await db.query(
-    //   `SELECT company_handle AS "companyHandle"
-    //     FROM jobs`
-    // );
-
-    // console.log('This is allJobs', allJobs.rows);
-    // console.log('This is allJobs.length', allJobs.rows.length);
-
-    // const handleCheck = await db.query(
-    //   `SELECT company_handle AS "companyHandle"
-    //     FROM jobs
-    //     WHERE company_handle = $1`,
-    //     [companyHandle]
-    // )
-
-    // // console.log('This is companyHandle', companyHandle);
-    // console.log('This is handleCheck.rows', handleCheck.rows);
-    // console.log('This is handleCheck.rows.length', handleCheck.rows.length);
-
-    // if(handleCheck.rows.length === 0){
-    //   // console.log('This is before No company_handle_matching');
-    //   throw new BadRequestError(`No company_handle matching: ${companyHandle}`)
-    // }
-
-    // console.log('Do we ever get past handleCheck.rows.length === 0?');
-
     const result = await db.query(`
     INSERT INTO  jobs (title,
                       salary,
