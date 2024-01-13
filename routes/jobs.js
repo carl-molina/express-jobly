@@ -30,12 +30,15 @@ router.post("/", ensureAdmin, async function (req, res, next){
     jobNewSchema,
     {required: true}
   );
+
+  const { title, salary, equity, companyHandle } = req.body;
+
   if(!validator.valid){
     const errs = validator.errors.map(e => e.stack);
     throw new BadRequestError(errs);
   }
 
-  const job = await Job.create(req.body);
+  const job = await Job.create({ title, salary, equity, companyHandle });
   return res.status(201).json({ job});
 })
 

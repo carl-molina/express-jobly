@@ -23,25 +23,26 @@ afterAll(commonAfterAll);
 
 describe("POST /jobs", function(){
   const newJob = {
-    title: "new job",
-    salary: 100,
-    equity: 0.5,
-    companyHandle: "c1"
+    	title: "new job 3",
+	    salary: 100,
+	    equity: 0.5,
+	    companyHandle: "c1"
   };
 
-  // TODO: we're here
   test("ok for admin", async function () {
     const resp = await request(app)
       .post("/jobs")
       .send(newJob)
       .set("authorization", `Bearer ${adminToken}`);
-    // TODO: this is where it breaks
+
+    console.log('This is before resp.statusCode');
     expect(resp.statusCode).toEqual(201);
     expect(resp.body).toEqual({
       job: {
-        title: "new job",
+        id: expect.any(Number),
+        title: "new job 3",
         salary: 100,
-        equity: 0.5,
+        equity: "0.5",
         companyHandle: "c1"
       }
     });
