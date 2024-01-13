@@ -51,6 +51,8 @@ router.post("/", ensureAdmin, async function (req, res, next){
 
 router.get("/", async function(req, res, next){
   const jobs = await Job.findAll();
+  debugger;
+  // TODO: check in jobly_test db
 
   return res.json({ jobs });
 })
