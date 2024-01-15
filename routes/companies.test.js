@@ -268,6 +268,25 @@ describe("PATCH /companies/:handle", function () {
       .set("authorization", `Bearer ${adminToken}`);
     expect(resp.statusCode).toEqual(400);
   });
+
+
+
+
+  console.log('Before test');
+  test("admin, bad request on non-existent data", async function () {
+    const resp = await request(app)
+      .patch(`/companies/c1`)
+      .send({
+        fake: "not-a-url",
+      })
+      .set("authorization", `Bearer ${adminToken}`);
+
+
+    console.log('LOG THIS PLZ?');
+    console.log('This is resp.text:', resp.text);
+    expect(resp.text).toEqual("swag");
+    expect(resp.statusCode).toEqual(400);
+  });
 });
 
 /************************************** DELETE /companies/:handle */
