@@ -12,7 +12,8 @@ const {
   commonAfterEach,
   commonAfterAll,
   u1Token,
-  adminToken
+  adminToken,
+  jobIds
 } = require("./_testCommon");
 
 beforeAll(commonBeforeAll);
@@ -30,13 +31,32 @@ describe("POST /jobs", function(){
 	    companyHandle: "c1"
   };
 
+  const jobNoCompany = {
+    title: "new job 3",
+    salary: 100,
+    equity: 0.5,
+    companyHandle: "fake"
+};
+
+test("bad request for no such company", async function () {
+  try {
+    const resp = await request(app)
+    .post("/jobs")
+    .send(jobNoCompany)
+    .set("authorization", `Bearer ${adminToken}`);
+  } catch (err) {
+    expect(err.statusCode).toEqual(404);
+    expect(err.toString()).toContain("No company: fake");
+  }
+
+});
+
   test("ok for admin", async function () {
     const resp = await request(app)
       .post("/jobs")
       .send(newJob)
       .set("authorization", `Bearer ${adminToken}`);
 
-    console.log('This is before resp.statusCode');
     expect(resp.statusCode).toEqual(201);
     expect(resp.body).toEqual({
       job: {
@@ -90,12 +110,26 @@ describe("GET /jobs", function () {
       jobs:
         [
           {
-            id: expect.any(Number),
+            id: jobIds[0],
             title: "c1 job",
             salary: 10,
             equity: "0.2",
             companyHandle: "c1"
-          }
+          },
+          {
+            id: jobIds[1],
+            title: "c2 job",
+            salary: 10,
+            equity: "0.2",
+            companyHandle: "c2"
+          },
+          {
+            id: jobIds[2],
+            title: "c3 job",
+            salary: 10,
+            equity: "0.2",
+            companyHandle: "c3"
+          },
         ],
     });
   });

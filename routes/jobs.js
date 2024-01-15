@@ -38,6 +38,7 @@ router.post("/", ensureAdmin, async function (req, res, next){
     throw new BadRequestError(errs);
   }
 
+  console.log('before Job.create');
   const job = await Job.create({ title, salary, equity, companyHandle });
   return res.status(201).json({ job});
 })

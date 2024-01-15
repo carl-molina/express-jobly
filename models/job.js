@@ -18,6 +18,15 @@ class Job{
    */
   static async create({ title, salary, equity, companyHandle }){
 
+    const companyPreCheck = await db.query(`
+      SELECT handle
+      FROM companies
+      WHERE handle = $1`,
+    [companyHandle]);
+    const company = companyPreCheck.rows[0];
+
+if (!company) throw new NotFoundError(`No company: ${companyHandle}`);
+
     const result = await db.query(`
     INSERT INTO  jobs (title,
                       salary,

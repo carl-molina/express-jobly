@@ -69,7 +69,7 @@ describe("create", function(){
     } catch (err) {
       expect(err.toString())
         .toContain(
-          'insert or update on table "jobs" violates foreign key constraint'
+          'No company: not_a_handle'
         );
     }
   });
