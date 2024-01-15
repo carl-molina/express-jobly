@@ -36,7 +36,6 @@ describe("create", function(){
 
   test("works", async function(){
     const job = await Job.create(newJob);
-    console.log('This is job', job);
     const jobId = job.id;
     expect(job).toEqual({
       id: jobId,
@@ -63,14 +62,20 @@ describe("create", function(){
   });
 
   test("bad request with non-existent company_handle", async function(){
-    try{
+
+    try {
       await Job.create(jobBadHandle);
       throw new Error("fail test, shouldn't get here")
-    }catch(err){
-      expect(err instanceof BadRequestError).toBeTruthy();
+    } catch (err) {
+      expect(err.toString())
+        .toContain(
+          'insert or update on table "jobs" violates foreign key constraint'
+        );
     }
   });
 });
+
+
 /************************************** findAll */
 
 describe("findAll", function () {
@@ -79,25 +84,25 @@ describe("findAll", function () {
     let jobs = await Job.findAll();
     expect(jobs).toEqual([
       {
-        id: jobs[0].id,
+        id: expect.any(Number),
         title: "Job1",
         salary: 1000,
         equity: "1.0",
-        company_handle: 'c1'
+        companyHandle: 'c1'
       },
       {
-        id: jobs[1].id,
+        id: expect.any(Number),
         title: "Job2",
         salary: 2000,
         equity: "0.5",
-        company_handle: "c2"
+        companyHandle: "c2"
       },
       {
-        id: jobs[2].id,
+        id: expect.any(Number),
         title: "Job3",
         salary: 3000,
         equity: "0.2",
-        company_handle: "c3"
+        companyHandle: "c3"
       }
     ]);
   });
@@ -120,6 +125,7 @@ describe("get", function () {
     const newJobId = newJobData.id;
     const job = await Job.get(newJobId);
     expect(job).toEqual({
+      id: newJobId,
       title: "Job",
       salary: 100,
       equity: "0.5",
