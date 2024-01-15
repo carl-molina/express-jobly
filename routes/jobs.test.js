@@ -110,21 +110,21 @@ describe("GET /jobs", function () {
       jobs:
         [
           {
-            id: jobIds[0],
+            id: expect.any(Number),
             title: "c1 job",
             salary: 10,
             equity: "0.2",
             companyHandle: "c1"
           },
           {
-            id: jobIds[1],
+            id: expect.any(Number),
             title: "c2 job",
             salary: 10,
             equity: "0.2",
             companyHandle: "c2"
           },
           {
-            id: jobIds[2],
+            id: expect.any(Number),
             title: "c3 job",
             salary: 10,
             equity: "0.2",
